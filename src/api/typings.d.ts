@@ -403,6 +403,7 @@ declare namespace API {
     count?: number
     namePrefix?: string
     searchText?: string
+    source?: number
   }
 
   type PictureUploadRequest = {
@@ -442,6 +443,11 @@ declare namespace API {
 
   type SearchPictureByPictureRequest = {
     pictureId?: number
+  }
+
+  type sendEmailCodeUsingGETParams = {
+    /** email */
+    email: string
   }
 
   type Space = {
@@ -630,6 +636,11 @@ declare namespace API {
     filepath?: string
   }
 
+  type updateUserPasswordUsingPOSTParams = {
+    /** userPassword */
+    userPassword?: string
+  }
+
   type uploadPictureUsingPOSTParams = {
     fileUrl?: string
     id?: number
@@ -678,6 +689,7 @@ declare namespace API {
 
   type UserRegisterRequest = {
     checkPassword?: string
+    emailCode?: string
     userAccount?: string
     userPassword?: string
   }

@@ -4,7 +4,19 @@
     <div class="desc">企业级智能协同云图库</div>
     <a-form :model="formState" name="basic" label-align="left" autocomplete="off" @finish="handleSubmit">
       <a-form-item name="userAccount" :rules="[{ required: true, message: '请输入账号' }]">
-        <a-input v-model:value="formState.userAccount" placeholder="请输入账号" />
+        <a-input v-model:value="formState.userAccount" placeholder="请输入邮箱账号" />
+      </a-form-item>
+      <a-form-item name="emailCode" :rules="[{ required: true, message: '请输入验证码' }]">
+        <div style="display: flex; gap: 8px;">
+          <a-input v-model:value="formState.emailCode" placeholder="请输入验证码" style="flex: 1;" />
+          <a-button 
+            :disabled="sendCodeDisabled" 
+            @click="sendEmailCode"
+            style="width: 120px;"
+          >
+            {{ sendCodeText }}
+          </a-button>
+        </div>
       </a-form-item>
       <a-form-item name="userPassword" :rules="[
         { required: true, message: '请输入密码' },
@@ -30,16 +42,62 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
-import { userRegisterUsingPost } from '@/api/userController'
+import { userRegisterUsingPost, sendEmailCodeUsingGet } from '@/api/userController'
 import router from '@/router'
 const formState = reactive<API.UserRegisterRequest>({
   userAccount: '',
   userPassword: '',
   checkPassword: '',
+  emailCode: '',
 })
 
+// 验证码发送相关状态
+const sendCodeDisabled = ref(false)
+const sendCodeText = ref('发送验证码')
+const countDown = ref(0)
+
+/**
+ * 发送邮箱验证码
+ */
+const sendEmailCode = async () => {
+  // 验证邮箱格式
+  if (!formState.userAccount) {
+    message.error('请先输入邮箱账号')
+    return
+  }
+  if (!formState.userAccount.includes('@')) {
+    message.error('请输入正确的邮箱格式')
+    return
+  }
+
+  try {
+    sendCodeDisabled.value = true
+    const res = await sendEmailCodeUsingGet({ email: formState.userAccount })
+    if (res.data.code === 0) {
+      message.success('验证码已发送，请查收邮箱')
+      // 开始倒计时
+      countDown.value = 60
+      const timer = setInterval(() => {
+        countDown.value--
+        sendCodeText.value = `${countDown.value}秒后重发`
+        if (countDown.value <= 0) {
+          clearInterval(timer)
+          sendCodeDisabled.value = false
+          sendCodeText.value = '发送验证码'
+        }
+      }, 1000)
+    } else {
+      message.error('发送失败：' + res.data.message)
+      sendCodeDisabled.value = false
+    }
+  } catch (error) {
+    console.error('发送验证码出错', error)
+    message.error('发送验证码失败，请稍后重试')
+    sendCodeDisabled.value = false
+  }
+}
 
 /**
  * 提交表单
@@ -69,6 +127,15 @@ const handleSubmit = async (values: any) => {
 #userRegisterPage {
   max-width: 360px;
   margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
 }
 
 .title {

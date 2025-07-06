@@ -135,6 +135,21 @@ export async function userRegisterUsingPost(
   })
 }
 
+/** sendEmailCode GET /api/user/send-email-code */
+export async function sendEmailCodeUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.sendEmailCodeUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/send-email-code', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
 /** updateUser POST /api/user/update */
 export async function updateUserUsingPost(
   body: API.UserUpdateRequest,
@@ -182,6 +197,21 @@ export async function updateUserAvatarUsingPost(
     method: 'POST',
     data: formData,
     requestType: 'form',
+    ...(options || {}),
+  })
+}
+
+/** updateUserPassword POST /api/user/update/password */
+export async function updateUserPasswordUsingPost(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.updateUserPasswordUsingPOSTParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/update/password', {
+    method: 'POST',
+    params: {
+      ...params,
+    },
     ...(options || {}),
   })
 }
