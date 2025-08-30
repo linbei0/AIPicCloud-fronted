@@ -1,12 +1,8 @@
 import axios from 'axios'
 import { message } from 'ant-design-vue'
 
-// 区分开发和生产环境
-const DEV_BASE_URL = 'http://localhost:8123'
-const PROD_BASE_URL = '/api'
-// 创建 Axios 实例
 const myAxios = axios.create({
-  baseURL: PROD_BASE_URL, // 生产环境改为 PROD_BASE_URL
+  baseURL: import.meta.env.PROD ? '' : 'http://localhost:8123',
   timeout: 10000,
   withCredentials: true,
 })
