@@ -2,11 +2,18 @@ import axios from 'axios'
 import { message } from 'ant-design-vue'
 
 // 区分开发和生产环境
-const DEV_BASE_URL = 'http://localhost:8123'
-const PROD_BASE_URL = 'http://121.36.217.135'
+const DEV_BASE_URL = '' // 开发环境使用代理，相对路径
+const PROD_BASE_URL = '' // 生产环境使用Vercel API路由，相对路径
+
+// 根据环境选择baseURL
+const getBaseURL = () => {
+  // 如果是开发环境或生产环境都使用相对路径
+  return ''
+}
+
 // 创建 Axios 实例
 const myAxios = axios.create({
-  baseURL: PROD_BASE_URL, // 生产环境改为 PROD_BASE_URL
+  baseURL: getBaseURL(),
   timeout: 10000,
   withCredentials: true,
 })
