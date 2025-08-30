@@ -203,15 +203,15 @@ export async function updateUserAvatarUsingPost(
 
 /** updateUserPassword POST /api/user/update/password */
 export async function updateUserPasswordUsingPost(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.updateUserPasswordUsingPOSTParams,
+  body: API.UserUpdatePasswordRequest,
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean_>('/api/user/update/password', {
     method: 'POST',
-    params: {
-      ...params,
+    headers: {
+      'Content-Type': 'application/json',
     },
+    data: body,
     ...(options || {}),
   })
 }

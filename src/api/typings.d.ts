@@ -702,6 +702,12 @@ declare namespace API {
     userRole?: string
   }
 
+  type UserUpdatePasswordRequest = {
+    oldPassword?: string
+    newPassword?: string
+    confirmPassword?: string
+  }
+
   type UserVO = {
     createTime?: string
     id?: number

@@ -11,8 +11,10 @@
       <a-form-item>
         <a-button type="primary" html-type="submit">搜索</a-button>
       </a-form-item>
+      <a-form-item>
+        <a-button type="primary" @click="handleAdd" style="margin-bottom: 16px">添加用户</a-button>
+      </a-form-item>
     </a-form>
-    <div style="margin-bottom: 16px" />
     <!-- 表格 -->
     <a-table :columns="columns" :data-source="dataList" :pagination="pagination" @change="doTableChange">
       <template #bodyCell="{ column, record }">
@@ -48,12 +50,36 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- 添加用户模态框 -->
+    <a-modal v-model:visible="addVisible" title="添加用户" :mask-closable="false" @ok="saveAdd" @cancel="resetAdd">
+      <a-form :model="addUser" layout="vertical">
+        <a-form-item label="账号" required>
+          <a-input v-model:value="addUser.userAccount" placeholder="请输入账号" />
+        </a-form-item>
+        <a-form-item label="用户名" required>
+          <a-input v-model:value="addUser.userName" placeholder="请输入用户名" />
+        </a-form-item>
+        <a-form-item label="用户角色">
+          <a-select v-model:value="addUser.userRole" placeholder="请选择用户角色">
+            <a-select-option value="user">普通用户</a-select-option>
+            <a-select-option value="admin">管理员</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="头像">
+          <a-input v-model:value="addUser.userAvatar" placeholder="请输入头像URL（可选）" />
+        </a-form-item>
+        <a-form-item label="简介">
+          <a-textarea v-model:value="addUser.userProfile" :rows="3" placeholder="请输入用户简介（可选）" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { deleteUserUsingPost, listUserVoByPageUsingPost, updateUserUsingPost } from '@/api/userController.ts'
+import { deleteUserUsingPost, listUserVoByPageUsingPost, updateUserUsingPost, addUserUsingPost } from '@/api/userController.ts'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { Modal, Form, Input, Textarea } from 'ant-design-vue'
@@ -180,6 +206,16 @@ const editUser = ref({
   userProfile: ''
 })
 
+// 添加用户相关状态
+const addVisible = ref(false)
+const addUser = ref<API.UserAddRequest>({
+  userAccount: '',
+  userName: '',
+  userRole: 'user',
+  userAvatar: '',
+  userProfile: ''
+})
+
 // 编辑处理方法
 const handleEdit = (record: API.UserVO) => {
   editUser.value = {
@@ -207,6 +243,41 @@ const resetEdit = () => {
   editUser.value = {
     id: '',
     userName: '',
+    userProfile: ''
+  }
+}
+
+// 添加用户处理方法
+const handleAdd = () => {
+  addVisible.value = true
+}
+
+// 保存添加用户
+const saveAdd = async () => {
+  // 基本验证
+  if (!addUser.value.userAccount || !addUser.value.userName) {
+    message.error('账号和用户名不能为空')
+    return
+  }
+  
+  const res = await addUserUsingPost(addUser.value)
+  if (res.data.code === 0) {
+    message.success('添加用户成功，默认密码为：12345678')
+    fetchData()
+    addVisible.value = false
+    resetAdd()
+  } else {
+    message.error('添加用户失败：' + res.data.message)
+  }
+}
+
+// 重置添加用户状态
+const resetAdd = () => {
+  addUser.value = {
+    userAccount: '',
+    userName: '',
+    userRole: 'user',
+    userAvatar: '',
     userProfile: ''
   }
 }

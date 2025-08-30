@@ -81,7 +81,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { listPictureByPageUsingPost, doPictureReviewUsingPost } from '@/api/pictureController.ts'
+import { listPictureByPageUsingPost, doPictureReviewUsingPost, deletePictureUsingPost } from '@/api/pictureController.ts'
 import { PIC_REVIEW_STATUS_MAP, PIC_REVIEW_STATUS_ENUM, PIC_REVIEW_STATUS_OPTIONS } from '@/constants/picture.ts'
 import dayjs from 'dayjs'
 import { message } from 'ant-design-vue'
@@ -206,6 +206,21 @@ const handleReview = async (record: API.Picture, reviewStatus: number) => {
     fetchData()
   } else {
     message.error('审核操作失败，' + res.data.message)
+  }
+}
+
+// 删除图片
+const doDelete = async (id: string) => {
+  if (!id) {
+    return
+  }
+  const res = await deletePictureUsingPost({ id })
+  if (res.data.code === 0) {
+    message.success('删除成功')
+    // 刷新数据
+    fetchData()
+  } else {
+    message.error('删除失败，' + res.data.message)
   }
 }
 </script>
