@@ -1,8 +1,17 @@
 {
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
+      "source": "/api/ws",
+      "destination": "/api/ws"
+    },
+    {
       "source": "/api/(.*)",
-      "destination": "http://121.36.217.135/api/$1"
+      "destination": "/api/proxy?path=$1"
     }
   ]
 }
