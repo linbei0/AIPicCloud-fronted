@@ -1,7 +1,7 @@
 <template>
   <a-modal class="image-cropper" v-model:visible="visible" title="编辑图片" :footer="false" @cancel="closeModal">
     <!-- 图片裁切组件 -->
-    <vue-cropper ref="cropperRef" :img="imageUrl" output-type="png" :info="true" :can-move-box="true" :fixed-box="false"
+    <vue-cropper ref="cropperRef" :img="cropperImageUrl" output-type="png" :info="true" :can-move-box="true" :fixed-box="false"
       :auto-crop="true" :center-box="true" />
     <div style="margin-bottom: 16px" />
     <!-- 协同编辑操作 -->
@@ -35,6 +35,7 @@ import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import PictureEditWebSocket from '@/utils/pictureEditWebSocket.ts'
 import { PICTURE_EDIT_ACTION_ENUM, PICTURE_EDIT_MESSAGE_TYPE_ENUM } from '@/constants/picture.ts'
 import { SPACE_TYPE_ENUM } from '@/constants/space.ts'
+import { getCropperImageUrl } from '@/utils/pictureUrl.ts'
 
 interface Props {
   imageUrl?: string
@@ -45,6 +46,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const cropperImageUrl = computed(() => getCropperImageUrl(props.imageUrl))
 
 // 是否为团队空间
 const isTeamSpace = computed(() => {

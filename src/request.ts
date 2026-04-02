@@ -1,6 +1,17 @@
 import axios from 'axios'
 import { message } from 'ant-design-vue'
+// //云服务器部署
+// // 区分开发和生产环境
+// const DEV_BASE_URL = 'http://localhost:8123'
+// const PROD_BASE_URL = 'http://121.36.217.135'
+// // 创建 Axios 实例
+// const myAxios = axios.create({
+//   baseURL: PROD_BASE_URL, // 生产环境改为 PROD_BASE_URL
+//   timeout: 10000,
+//   withCredentials: true,
+// })
 
+// vercel 部署
 const myAxios = axios.create({
   baseURL: import.meta.env.PROD ? '' : 'http://localhost:8123',
   timeout: 10000,
